@@ -35,7 +35,7 @@ async fn main() {
     let mut conn = client
         .tunnel(
             Uri::from_static("https://z3ntl3.com:443"),
-            "147.45.78.89:1080".parse().unwrap(),
+            "45.92.108.112:80".parse().unwrap(),
         )
         .await
         .unwrap();
