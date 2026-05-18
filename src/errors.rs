@@ -1,28 +1,12 @@
-use std::error::Error;
-use std::fmt::{self, Debug, Display};
+use thiserror::Error;
 
-#[derive(Debug)]
-pub struct InvalidHost;
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("invalid URI")]
+    InvalidURI,
+    #[error("response from proxy server was not OK: {0}")]
+    ProxyResponseNotOk(String),
 
-impl Error for InvalidHost {}
-impl Display for InvalidHost {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "invalid host")
-    }
-}
-
-#[derive(Debug)]
-pub struct NotOk {
-    pub message: String,
-}
-
-impl Error for NotOk {}
-impl Display for NotOk {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "proxy server rejected request and responded with: {}",
-            self.message
-        )
-    }
+    #[error(transparent)]
+    Other(#[from] std::io::Error),
 }

@@ -1,4 +1,6 @@
-use crate::{errors, is_ok_status};
+pub use crate::auth;
+pub use crate::errors;
+use crate::is_ok_status;
 use http::Uri;
 use rustls_pki_types::ServerName;
 use std::{error::Error, net::SocketAddrV4, sync::Arc};
@@ -22,8 +24,8 @@ impl HttpsProxy {
         self
     }
 
-    pub fn build(self) -> Self {
-        self
+    pub fn build(self) -> Result<Self, Box<dyn Error>> {
+        Ok(self)
     }
 
     /// todo
@@ -31,19 +33,20 @@ impl HttpsProxy {
         &self,
         dest: Uri,
         proxy_server: SocketAddrV4,
-    ) -> Result<TlsStream<TcpStream>, Box<dyn Error>> {
+        auth: Option<auth::Auth>,
+    ) -> crate::Result<TlsStream<TcpStream>> {
         let mut conn = TcpStream::connect(proxy_server).await?;
         let connector = TlsConnector::from(self.config.clone().unwrap());
         let dnsname =
-            ServerName::try_from(format!("{}", dest.host().ok_or(errors::InvalidHost)?))
+            ServerName::try_from(format!("{}", dest.host().ok_or(errors::Error::InvalidURI)?))
                 .unwrap();
 
-        let packet = format!(
-            "CONNECT {}:{} HTTP/1.1\r\nHost: {}\r\n\r\n",
-            dest.host().ok_or(errors::InvalidHost)?,
-            dest.port().ok_or(errors::InvalidHost)?,
-            dest.host().ok_or(errors::InvalidHost)?
+        let target = format!(
+            "{}:{}",
+            dest.host().ok_or(errors::Error::InvalidURI)?,
+            dest.port().ok_or(errors::Error::InvalidURI)?
         );
+        let packet = format!("CONNECT {} HTTP/1.1\r\nHost: {}\r\n\r\n", target, target);
 
         println!("packet {}", packet);
 
@@ -68,9 +71,7 @@ impl HttpsProxy {
 
         let response = String::from_utf8_lossy(&response);
         if !is_ok_status(response.clone()) {
-            return Err(Box::new(errors::NotOk {
-                message: response.into(),
-            }));
+            return Err(errors::Error::ProxyResponseNotOk(response.into()));
         }
 
         let tunnel = connector.connect(dnsname, conn).await?;
