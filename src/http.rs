@@ -18,7 +18,7 @@ use tokio::{
 ///
 /// [^note]: You should use [crate::https::HttpsProxy] unless you know what you're doing
 pub async fn tunnel(
-    dest: Uri,
+    dest: &Uri,
     proxy_server: SocketAddrV4,
     auth: Option<auth::Auth>,
 ) -> crate::Result<TcpStream> {

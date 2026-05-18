@@ -3,17 +3,21 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 #[tokio::main]
 async fn main() {
-    let mut conn = proxifier_rs::http::tunnel(
-        Uri::from_static("http://httpbin.org:80"),
-        "52.229.30.3:80".parse().unwrap(),
-        None,
+    let uri = Uri::from_static("http://httpbin.org:80");
+    let mut conn = proxifier_rs::http::tunnel(&uri, "52.229.30.3:80".parse().unwrap(), None)
+        .await
+        .unwrap();
+
+    conn.write(
+        format!(
+            "GET /headers HTTP/1.1\r\nHost: {}:{}\r\nConnection: close\r\n\r\n",
+            uri.host().unwrap(),
+            uri.port().unwrap()
+        )
+        .as_bytes(),
     )
     .await
     .unwrap();
-
-    conn.write(b"GET /headers HTTP/1.1\r\nHost: httpbin.org:80\r\nConnection: close\r\n\r\n")
-        .await
-        .unwrap();
 
     let mut out = String::new();
     conn.read_to_string(&mut out).await.unwrap();
