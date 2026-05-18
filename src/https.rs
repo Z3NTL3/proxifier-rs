@@ -28,7 +28,13 @@ impl HttpsProxy {
         Ok(self)
     }
 
-    /// todo
+    /// Opens a tunnel via proxy server to target.
+    ///
+    /// `auth` should be [`auth::Auth::HTTPAuthorizationHeader`] or [`None`] when no authentication is required, when given it will be set on Authorization header in initial handshake request to proxy server
+    ///
+    /// Implementation is based on: [HTTP CONNECT](https://www.rfc-editor.org/rfc/rfc9110.html#name-connect) and has TLS support via `rustls`
+    ///
+    /// Subtly different, [crate::https::HttpProxy] is an implementation based on [IP Proxy](https://www.rfc-editor.org/rfc/rfc9484.html)
     pub async fn tunnel(
         &self,
         dest: Uri,
@@ -46,9 +52,12 @@ impl HttpsProxy {
             dest.host().ok_or(errors::Error::InvalidURI)?,
             dest.port().ok_or(errors::Error::InvalidURI)?
         );
-        let packet = format!("CONNECT {} HTTP/1.1\r\nHost: {}\r\n\r\n", target, target);
+        let mut packet = format!("CONNECT {target} HTTP/1.1\r\nHost: {target}\r\n");
+        if let Some(auth::Auth::HTTPAuthorizationHeader(header)) = auth {
+            packet.push_str(&format!("{}\r\n", header));
+        }
 
-        println!("packet {}", packet);
+        packet.push_str("\r\n");
 
         conn.write_all(packet.as_bytes()).await?;
         conn.flush().await?;

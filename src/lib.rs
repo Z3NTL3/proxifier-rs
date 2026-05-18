@@ -1,8 +1,5 @@
-//! Proxifier is high-level Proxy Tunnel library. It supports HTTP/HTTPS/SOCKS4/SOCKS5 type proxies.
-//!
-//! Built on top of `tokio` and `rustls`.
-//!
-
+#![doc = include_str!("../README.md")]
+pub use rustls::{ClientConfig, RootCertStore};
 pub type Result<T> = std::result::Result<T, errors::Error>;
 
 use std::borrow::Cow;
@@ -22,8 +19,8 @@ pub mod errors;
 pub use errors::Error;
 pub mod http;
 pub mod https;
-pub mod socks4 {}
-pub mod socks5 {}
+pub mod socks4;
+pub mod socks5;
 
 #[cfg(test)]
 mod tests;

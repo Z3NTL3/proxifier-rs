@@ -9,12 +9,11 @@ use tokio::{
 
 /// Opens a tunnel via proxy server to target.
 ///
-/// `auth` should be [`auth::Auth::HTTPAuthorizationHeader`], it will be set on Authorization header in initial handshake request to proxy server
+/// `auth` should be [`auth::Auth::HTTPAuthorizationHeader`] or [`None`] when no authentication is required, when given it will be set on Authorization header in initial handshake request to proxy server
 ///
 /// Implementation is based on: [IP Proxy](https://www.rfc-editor.org/rfc/rfc9484.html)
 ///
 /// [crate::https::HttpsProxy] is based on [HTTP CONNECT](https://www.rfc-editor.org/rfc/rfc9110.html#name-connect) and has TLS support via `rustls`
-///
 ///
 /// [^note]: You should use [crate::https::HttpsProxy] unless you know what you're doing
 pub async fn tunnel(
@@ -24,14 +23,13 @@ pub async fn tunnel(
 ) -> crate::Result<TcpStream> {
     let mut conn = TcpStream::connect(proxy_server).await?;
     let mut packet = format!(
-        "GET {} HTTP/1.1\r\nHost: {}:{}\r\nConnection: Upgrade\r\nUpgrade: connect-ip\r\n",
-        dest,
+        "GET {dest} HTTP/1.1\r\nHost: {}:{}\r\nConnection: Upgrade\r\nUpgrade: connect-ip\r\n",
         dest.host().ok_or(Error::InvalidURI)?,
         dest.port().ok_or(Error::InvalidURI)?
     );
 
     if let Some(auth::Auth::HTTPAuthorizationHeader(header)) = auth {
-        packet.push_str(&format!("Authorization: {}\r\n", header));
+        packet.push_str(&format!("{}\r\n", header));
     }
 
     packet.push_str("\r\n");

@@ -1,15 +1,19 @@
 ### proxifier-rs
 
-A minimal implementation of TCP Forward Proxy
+Proxifier is high-level Proxy Tunnel library. It supports HTTP/HTTPS/SOCKS4/SOCKS5 type proxies.
+Built on top of `tokio` and `rustls`.
+
+#### Authentication methods
+
+- `proxifier-rs` can do arbitrary HTTP HEADER authentication such as via `Proxy-Authorization` for `http` and `https` proxy servers
+- SOCKS5 supports `NoAuth` and `UserPass` authentication, other methods are not implemented
+- SOCKS4 RFC has no builtin authentication support
+
+#### Supports
 
 - `http`
+  > Implementation is based on [IP Proxy RFC](#)
 - `https`
+  > Implementation is based on `CONNECT` in [HTTP RFC](#)
 - `socks4`
 - `socks5`
-
-Can do basic password proxy authorization
-
-- Implementation is built around async on top of `tokio`
-- `tracing` from Tokio is used, so it's portable to tracing subscribers if you use it
-
-Extensions are partially implemented.
