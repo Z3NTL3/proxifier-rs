@@ -47,7 +47,7 @@ pub async fn tunnel(
         }
 
         response.extend_from_slice(&buf[..n]);
-        if response.windows(4).any(|w| w == b"\r\n\r\n") {
+        if response.ends_with(b"\r\n\r\n") {
             break;
         }
     }

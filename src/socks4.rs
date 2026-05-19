@@ -1,5 +1,3 @@
-use crate::auth;
-use byteorder::{BigEndian, ByteOrder};
 use std::net::SocketAddrV4;
 use tokio::{io::AsyncWriteExt, net::TcpStream};
 use tokio_rustls::TlsStream;
@@ -17,21 +15,33 @@ enum Response {
 
 pub async fn tunnel(target: SocketAddrV4, proxy_server: SocketAddrV4) -> crate::Result<TcpStream> {
     let mut conn = TcpStream::connect(proxy_server).await?;
-    let mut packet: Vec<u8> = vec![];
+    let mut packet = [0u8; 9];
 
-    packet.push(VERSION_4); // VN
-    packet.push(CONNECT_REQUEST); // CONNECT
+    packet[0] = VERSION_4;
+    packet[1] = CONNECT_REQUEST;
 
-    let mut port_bytes = [0u8; 16];
-    BigEndian::write_u16(&mut port_bytes, target.port());
-    packet.extend_from_slice(&port_bytes);
+    packet[2..4].copy_from_slice(&target.port().to_be_bytes());
+    packet[4..8].copy_from_slice(&target.ip().octets());
+    packet[8] = NULL;
 
-    let ip = [0u8; 32];
-    BigEndian::write_u32(&mut port_bytes, target.port().into());
-    packet.extend_from_slice(&ip);
-
-    packet.push(NULL);
     conn.write_all(&packet).await?;
-
     Ok(conn)
+}
+
+pub async fn tunnel_tls(
+    target: SocketAddrV4,
+    proxy_server: SocketAddrV4,
+) -> crate::Result<TlsStream<TcpStream>> {
+    let mut conn = TcpStream::connect(proxy_server).await?;
+    let mut packet = [0u8; 9];
+
+    packet[0] = VERSION_4;
+    packet[1] = CONNECT_REQUEST;
+
+    packet[2..4].copy_from_slice(&target.port().to_be_bytes());
+    packet[4..8].copy_from_slice(&target.ip().octets());
+    packet[8] = NULL;
+
+    conn.write_all(&packet).await?;
+    todo!()
 }

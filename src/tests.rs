@@ -45,11 +45,7 @@ async fn test_https_proxy_auth() {
         .with_root_certificates(root_cert_store)
         .with_no_client_auth();
 
-    let client = crate::https::HttpsProxy::builder()
-        .with_client_config(Arc::new(config))
-        .build()
-        .unwrap();
-
+    let client = crate::https::HttpsProxy::with_client_config(Arc::new(config));
     let mut conn = client
         .tunnel(
             Uri::from_static("https://z3ntl3.com:443"),

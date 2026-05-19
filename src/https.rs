@@ -11,21 +11,12 @@ use tokio::{
 use tokio_rustls::{TlsConnector, client::TlsStream, rustls::ClientConfig};
 
 pub struct HttpsProxy {
-    config: Option<Arc<ClientConfig>>,
+    config: Arc<ClientConfig>,
 }
 
 impl HttpsProxy {
-    pub fn builder() -> Self {
-        Self { config: None }
-    }
-
-    pub fn with_client_config(mut self, config: Arc<ClientConfig>) -> Self {
-        self.config = Some(config);
-        self
-    }
-
-    pub fn build(self) -> Result<Self, Box<dyn Error>> {
-        Ok(self)
+    pub fn with_client_config(config: Arc<ClientConfig>) -> Self {
+        Self { config }
     }
 
     /// Opens a tunnel via proxy server to target.
@@ -42,10 +33,9 @@ impl HttpsProxy {
         auth: Option<auth::Auth>,
     ) -> crate::Result<TlsStream<TcpStream>> {
         let mut conn = TcpStream::connect(proxy_server).await?;
-        let connector = TlsConnector::from(self.config.clone().unwrap());
+        let connector = TlsConnector::from(self.config.clone());
         let dnsname =
-            ServerName::try_from(format!("{}", dest.host().ok_or(errors::Error::InvalidURI)?))
-                .unwrap();
+            ServerName::try_from(format!("{}", dest.host().ok_or(errors::Error::InvalidURI)?))?;
 
         let target = format!(
             "{}:{}",
@@ -73,7 +63,7 @@ impl HttpsProxy {
             }
 
             response.extend_from_slice(&buf[..n]);
-            if response.windows(4).any(|w| w == b"\r\n\r\n") {
+            if response.ends_with(b"\r\n\r\n") {
                 break;
             }
         }
