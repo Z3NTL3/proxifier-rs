@@ -230,7 +230,7 @@ dependencies = [
 
 [[package]]
 name = "proxifier-rs"
-version = "0.1.6"
+version = "0.1.61"
 dependencies = [
  "base64",
  "byteorder",

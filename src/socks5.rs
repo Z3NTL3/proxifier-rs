@@ -1,7 +1,11 @@
-#![doc = include_str!("../SOCKS4.md")]
+#![doc = include_str!("../SOCKS5.md")]
 use rustls::ClientConfig;
 use rustls_pki_types::ServerName;
-use std::{marker::PhantomData, net::SocketAddrV4, sync::Arc};
+use std::{
+    marker::PhantomData,
+    net::{SocketAddr, SocketAddrV4, SocketAddrV6},
+    sync::Arc,
+};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
@@ -9,9 +13,38 @@ use tokio::{
 use tokio_rustls::{TlsConnector, client::TlsStream};
 
 use crate::errors;
-static VERSION_4: u8 = 0x05;
-static CONNECT_REQUEST: u8 = 0x01;
+static VERSION_5: u8 = 0x05;
 static NULL: u8 = 0x00;
+
+/// Represents either IPV4 and IPV6 via [`NetworkAddress::IP`] or domain [`NetworkAddress::Domain`]
+pub enum TargetNetwork {
+    IP(SocketAddr),
+    Domain(String),
+}
+
+impl From<SocketAddrV4> for TargetNetwork {
+    fn from(value: SocketAddrV4) -> Self {
+        Self::IP(SocketAddr::V4(value))
+    }
+}
+
+impl From<SocketAddrV6> for TargetNetwork {
+    fn from(value: SocketAddrV6) -> Self {
+        Self::IP(SocketAddr::V6(value))
+    }
+}
+
+impl From<String> for TargetNetwork {
+    fn from(value: String) -> Self {
+        Self::Domain(value)
+    }
+}
+
+impl<'a> From<&'a str> for TargetNetwork {
+    fn from(value: &'a str) -> Self {
+        Self::Domain(value.into())
+    }
+}
 
 enum ATYP {
     IPV4 = 0x01,
@@ -48,4 +81,11 @@ impl TryFrom<u8> for ReplyOK {
             )),
         }
     }
+}
+
+pub struct NoProxy;
+pub struct HasProxy;
+
+pub struct Socks5Builder<S = NoProxy> {
+    phantom: PhantomData<S>,
 }
