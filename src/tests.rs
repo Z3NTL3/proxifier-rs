@@ -69,7 +69,7 @@ async fn test_https_proxy_auth() {
 }
 
 #[tokio::test]
-async fn test_socks4_tls() {
+async fn test_socks4_tls() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let mut root_cert_store = RootCertStore::empty();
     root_cert_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
 
@@ -80,30 +80,30 @@ async fn test_socks4_tls() {
     );
     let with_sni = ServerName::try_from("api.ipify.org").unwrap();
 
-    let mut conn = crate::socks4::Socks4::new()
+    let client = crate::socks4::Socks4::builder()
         .proxy("72.195.34.35:27360".parse().unwrap())
         .to("172.67.74.152:443".parse().unwrap())
-        .connect_tls(config.clone(), with_sni)
-        .await
-        .unwrap();
+        .build()?;
 
+    let mut conn = client.connect_tls(config.clone(), with_sni).await.unwrap();
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:443\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
 
     let mut resp = String::new();
     conn.read_to_string(&mut resp).await.unwrap();
-    println!("out: {:?}", resp)
+    println!("out: {:?}", resp);
+    Ok(())
 }
 
 #[tokio::test]
-async fn test_socks4() {
-    let mut conn = crate::socks4::Socks4::new()
+async fn test_socks4() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let mut conn = crate::socks4::Socks4::builder()
         .proxy("72.195.34.35:27360".parse().unwrap())
-        .to("172.67.74.152:80".parse().unwrap())
+        .to("104.26.12.205:80".parse().unwrap())
+        .build()?
         .connect()
-        .await
-        .unwrap();
+        .await?;
 
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")
         .await
@@ -111,5 +111,6 @@ async fn test_socks4() {
 
     let mut resp = String::new();
     conn.read_to_string(&mut resp).await.unwrap();
-    println!("out: {:?}", resp)
+    println!("out: {:?}", resp);
+    Ok(())
 }
