@@ -58,7 +58,7 @@ impl Socks4 {
         self
     }
 
-    pub async fn tunnel(&self) -> crate::Result<TcpStream> {
+    pub async fn connect(&self) -> crate::Result<TcpStream> {
         let proxy = self.proxy.ok_or(errors::Error::SocksProxyAddrNotSet)?;
         let target = self.to.ok_or(errors::Error::SocksTargetAddrNotSet)?;
 
@@ -81,12 +81,12 @@ impl Socks4 {
         Ok(conn)
     }
 
-    pub async fn tunnel_tls(
+    pub async fn connect_tls(
         &self,
         config: Arc<ClientConfig>,
         sni: ServerName<'static>,
     ) -> crate::Result<TlsStream<TcpStream>> {
-        let conn = self.tunnel().await?;
+        let conn = self.connect().await?;
 
         let connector = TlsConnector::from(config);
         let conn = connector.connect(sni, conn).await?;

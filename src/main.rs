@@ -18,7 +18,7 @@ async fn main() {
     let mut conn = Socks4::new()
         .proxy("72.195.34.35:27360".parse().unwrap())
         .to("172.67.74.152:443".parse().unwrap())
-        .tunnel_tls(config.clone(), with_sni)
+        .connect_tls(config.clone(), with_sni)
         .await
         .unwrap();
 
