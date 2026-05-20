@@ -1,6 +1,6 @@
 ### proxifier-rs
 
-Proxifier is high-level Proxy Tunnel library. It supports HTTP/HTTPS/SOCKS4/SOCKS5 type proxies.
+Proxifier is high-level proxy client library. It supports HTTP/HTTPS/SOCKS4/SOCKS5 type proxies.
 
 - Built on top of `tokio` and `rustls`.
 - This is the Rust port for [proxifier](https://proxifier.z3ntl3.com), intended for use with the revamped [ProxyBeast](https://github.com/z3ntl3/ProxyBeast) software
