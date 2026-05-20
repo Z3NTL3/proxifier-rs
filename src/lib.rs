@@ -23,7 +23,6 @@ pub mod http;
 pub mod https;
 
 pub mod socks4;
-pub use socks4::Response;
 pub mod socks5;
 
 #[cfg(test)]

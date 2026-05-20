@@ -16,18 +16,15 @@ pub enum Error {
     #[error("response from proxy server was not OK: {0}")]
     ProxyResponseNotOk(String),
 
-    #[error("Request rejected or failed.")]
-    Socks4ProxyReply0x91,
+    #[error("server reply code: {0}")]
+    Socks4Error(u8),
 
-    #[error("Request rejected due to inability to connect to identd on the client.")]
-    Socks4ProxyReply0x92,
-
-    #[error("Request rejected because the client program and identd report different user-IDs.")]
-    Socks4ProxyReply0x93,
-
-    #[error(transparent)]
-    Other(#[from] std::io::Error),
+    #[error("server reply code: {0}")]
+    Socks5Error(u8),
 
     #[error(transparent)]
     DNSError(#[from] InvalidDnsNameError),
+
+    #[error(transparent)]
+    Other(#[from] std::io::Error),
 }

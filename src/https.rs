@@ -28,7 +28,7 @@ impl HttpsProxy {
     ///
     /// Implementation is based on: [HTTP CONNECT](https://www.rfc-editor.org/rfc/rfc9110.html#name-connect) and has TLS support via `rustls`
     ///
-    /// Subtly different, [crate::http::HttpProxy] is an implementation based on [IP Proxy](https://www.rfc-editor.org/rfc/rfc9484.html)
+    /// Subtly different, [crate::http::tunnel] is an implementation based on [IP Proxy](https://www.rfc-editor.org/rfc/rfc9484.html)
     pub async fn tunnel(
         &self,
         dest: Uri,

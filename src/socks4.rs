@@ -14,22 +14,17 @@ static CONNECT_REQUEST: u8 = 0x01;
 static NULL: u8 = 0x00;
 
 #[derive(Debug)]
-pub enum Response {
-    Granted = 90,
-    Failure = 91,
-    IdentFailure = 92,
-    IdentInvalid = 93,
-}
+pub(crate) struct ReplyOK;
 
-impl TryFrom<u8> for Response {
+impl TryFrom<u8> for ReplyOK {
     type Error = errors::Error;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            90 => Ok(Response::Granted),
-            91 => Err(errors::Error::Socks4ProxyReply0x91),
-            92 => Err(errors::Error::Socks4ProxyReply0x92),
-            93 => Err(errors::Error::Socks4ProxyReply0x93),
+            90 => Ok(ReplyOK),
+            91 => Err(errors::Error::Socks4Error(91)),
+            92 => Err(errors::Error::Socks4Error(92)),
+            93 => Err(errors::Error::Socks4Error(93)),
             _ => Err(errors::Error::ProxyResponseNotOk(
                 "unknown status reply from proxy server".into(),
             )),
@@ -150,7 +145,7 @@ impl Socks4 {
         let mut reply = [0u8; 8];
         conn.read(&mut reply[..]).await?;
 
-        Response::try_from(reply[1])?;
+        ReplyOK::try_from(reply[1])?;
         Ok(conn)
     }
 
