@@ -9,7 +9,6 @@ use std::{
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
-    time::error,
 };
 use tokio_rustls::{TlsConnector, client::TlsStream};
 
@@ -57,7 +56,6 @@ enum ATYP {
 enum AuthMethods {
     NoAuth = 0x00,
     UserPass = 0x02,
-    NotAcceptable = 0xff,
 }
 
 #[derive(Debug)]
