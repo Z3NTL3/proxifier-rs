@@ -1,6 +1,7 @@
 use rustls_pki_types::InvalidDnsNameError;
 use thiserror::Error;
 
+#[non_exhaustive]
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("invalid URI")]
@@ -16,13 +17,13 @@ pub enum Error {
     ProxyResponseNotOk(String),
 
     #[error("Request rejected or failed.")]
-    ProxyReply0x91,
+    Socks4ProxyReply0x91,
 
     #[error("Request rejected due to inability to connect to identd on the client.")]
-    ProxyReply0x92,
+    Socks4ProxyReply0x92,
 
     #[error("Request rejected because the client program and identd report different user-IDs.")]
-    ProxyReply0x93,
+    Socks4ProxyReply0x93,
 
     #[error(transparent)]
     Other(#[from] std::io::Error),

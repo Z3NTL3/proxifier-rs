@@ -7,6 +7,10 @@ license-file = "LICENSE"
 repository = "https://github.com/Z3NTL3/proxifier-rs"
 readme = "README.md"
 
+[features]
+default = ["tls"]
+tls = []
+
 [dependencies]
 bytes = "1.11.1"
 http = "1.4.0"

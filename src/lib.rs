@@ -19,7 +19,9 @@ pub mod errors;
 
 pub use errors::Error;
 pub mod http;
+#[cfg(feature = "tls")]
 pub mod https;
+
 pub mod socks4;
 pub use socks4::Response;
 pub mod socks5;
