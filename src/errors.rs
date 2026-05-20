@@ -16,12 +16,6 @@ pub enum Error {
     #[error("response from proxy server was not OK: {0}")]
     ProxyResponseNotOk(String),
 
-    #[error("server reply code: {0}")]
-    Socks4Error(u8),
-
-    #[error("server reply code: {0}")]
-    Socks5Error(u8),
-
     #[error(transparent)]
     DNSError(#[from] InvalidDnsNameError),
 

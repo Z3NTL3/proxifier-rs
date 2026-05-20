@@ -1,7 +1,7 @@
 [package]
 name = "proxifier-rs"
 description = "Proxy client library supporting SOCKS4/SOCKS5 and HTTP/HTTPS proxies with TLS support"
-version = "0.1.61"
+version = "0.1.62"
 edition = "2024"
 license-file = "LICENSE"
 repository = "https://github.com/Z3NTL3/proxifier-rs"

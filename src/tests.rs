@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{net::SocketAddrV4, sync::Arc};
 
 use http::Uri;
 use rustls::{ClientConfig, RootCertStore};
@@ -85,7 +85,8 @@ async fn test_socks4_tls() -> std::result::Result<(), Box<dyn std::error::Error>
         .to("172.67.74.152:443".parse().unwrap())
         .build()?;
 
-    let mut conn = client.connect_tls(config.clone(), with_sni).await.unwrap();
+    let conn = client.connect().await?;
+    let mut conn = client.tls(conn, config.clone(), with_sni).await?;
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:443\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();
@@ -103,6 +104,25 @@ async fn test_socks4() -> std::result::Result<(), Box<dyn std::error::Error>> {
         .to("104.26.12.205:80".parse().unwrap())
         .build()?
         .connect()
+        .await?;
+
+    conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")
+        .await
+        .unwrap();
+
+    let mut resp = String::new();
+    conn.read_to_string(&mut resp).await.unwrap();
+    println!("out: {:?}", resp);
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_socks5_ipv4() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let mut conn = crate::socks5::Socks5::builder()
+        .proxy("194.113.119.68:6742".parse().unwrap())
+        .to("104.26.12.205:80".parse::<SocketAddrV4>().unwrap().into())
+        .build()?
+        .connect(Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()))
         .await?;
 
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")

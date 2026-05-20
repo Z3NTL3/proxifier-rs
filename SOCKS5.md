@@ -1,1 +1,1 @@
-todo: docs and implementation
+todo: docs and minor refactor to implementation

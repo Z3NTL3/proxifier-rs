@@ -9,6 +9,10 @@ Proxifier is high-level proxy client library. It supports HTTP/HTTPS/SOCKS4/SOCK
 
 - Final build will have Cargo Features for TLS code artifacts management
 
+##### Features
+
+- `tls`, enabled by default
+
 #### Quick glance into the API
 
 ```rust

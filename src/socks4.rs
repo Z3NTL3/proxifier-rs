@@ -14,17 +14,24 @@ static CONNECT_REQUEST: u8 = 0x01;
 static NULL: u8 = 0x00;
 
 #[derive(Debug)]
-pub(crate) struct ReplyOK;
+pub(crate) struct Reply;
 
-impl TryFrom<u8> for ReplyOK {
+impl TryFrom<u8> for Reply {
     type Error = errors::Error;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            90 => Ok(ReplyOK),
-            91 => Err(errors::Error::Socks4Error(91)),
-            92 => Err(errors::Error::Socks4Error(92)),
-            93 => Err(errors::Error::Socks4Error(93)),
+            90 => Ok(Reply),
+            91 => Err(errors::Error::ProxyResponseNotOk(
+                "Request rejected or failed.".into(),
+            )),
+            92 => Err(errors::Error::ProxyResponseNotOk(
+                "Request rejected due to inability to connect to identd on the client.".into(),
+            )),
+            93 => Err(errors::Error::ProxyResponseNotOk(
+                "Request rejected because the client program and identd report different user-IDs."
+                    .into(),
+            )),
             _ => Err(errors::Error::ProxyResponseNotOk(
                 "unknown status reply from proxy server".into(),
             )),
@@ -143,26 +150,31 @@ impl Socks4 {
         conn.write_all(&packet).await?;
 
         let mut reply = [0u8; 8];
-        conn.read(&mut reply[..]).await?;
+        let n = conn.read(&mut reply[..]).await?;
+        if n == 0 {
+            return Err(errors::Error::ProxyResponseNotOk(
+                "proxy server didn't reply".into(),
+            ));
+        }
 
-        ReplyOK::try_from(reply[1])?;
+        Reply::try_from(reply[1])?;
         Ok(conn)
     }
 
-    /// Same as [`Socks4::connect`] except for that it wraps the [`TcpStream`] so that it supports TLS
+    /// Wraps a [`TcpStream`] so that it supports TLS
     ///
+    /// - `stream`: [`TcpStream`]
     /// - `config`: [`ClientConfig`]
     /// - `sni`: [`ServerName`]
     #[cfg(feature = "tls")]
-    pub async fn connect_tls(
+    pub async fn tls(
         &self,
+        stream: TcpStream,
         config: Arc<ClientConfig>,
         sni: ServerName<'static>,
     ) -> crate::Result<TlsStream<TcpStream>> {
-        let conn = self.connect().await?;
-
         let connector = TlsConnector::from(config);
-        let conn = connector.connect(sni, conn).await?;
+        let conn = connector.connect(sni, stream).await?;
         Ok(conn)
     }
 }
