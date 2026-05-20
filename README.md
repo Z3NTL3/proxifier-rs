@@ -7,6 +7,8 @@ Proxifier is high-level Proxy Tunnel library. It supports HTTP/HTTPS/SOCKS4/SOCK
 
 > **Do not use this crate yet, version 0.2.0 will be the final build with complete API, functionality and documentation**
 
+- Final build will have Cargo Features for TLS code artifacts management
+
 #### Quick glance into the API
 
 ```rust
