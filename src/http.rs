@@ -21,11 +21,12 @@ pub async fn tunnel(
     proxy_server: SocketAddrV4,
     auth: Option<auth::Auth>,
 ) -> crate::Result<TcpStream> {
+    let host = dest.host().ok_or(Error::InvalidURI)?;
+    let port = dest.port().ok_or(Error::InvalidURI)?;
+
     let mut conn = TcpStream::connect(proxy_server).await?;
     let mut packet = format!(
-        "GET {dest} HTTP/1.1\r\nHost: {}:{}\r\nConnection: Upgrade\r\nUpgrade: connect-ip\r\n",
-        dest.host().ok_or(Error::InvalidURI)?,
-        dest.port().ok_or(Error::InvalidURI)?
+        "GET {dest} HTTP/1.1\r\nHost: {host}:{port}\r\nConnection: Upgrade\r\nUpgrade: connect-ip\r\n",
     );
 
     if let Some(auth::Auth::HTTPAuthorizationHeader(header)) = auth {

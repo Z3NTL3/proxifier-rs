@@ -3,7 +3,7 @@ pub use crate::errors;
 use crate::is_ok_status;
 use http::Uri;
 use rustls_pki_types::ServerName;
-use std::{error::Error, net::SocketAddrV4, sync::Arc};
+use std::{net::SocketAddrV4, sync::Arc};
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,

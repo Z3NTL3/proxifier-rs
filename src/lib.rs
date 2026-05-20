@@ -1,5 +1,6 @@
 #![doc = include_str!("../README.md")]
 pub use rustls::{ClientConfig, RootCertStore};
+pub use rustls_pki_types::ServerName;
 pub type Result<T> = std::result::Result<T, errors::Error>;
 
 use std::borrow::Cow;
@@ -20,6 +21,7 @@ pub use errors::Error;
 pub mod http;
 pub mod https;
 pub mod socks4;
+pub use socks4::Response;
 pub mod socks5;
 
 #[cfg(test)]
