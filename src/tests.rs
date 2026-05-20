@@ -86,7 +86,7 @@ async fn test_socks4_tls() -> std::result::Result<(), Box<dyn std::error::Error>
         .build()?;
 
     let conn = client.connect().await?;
-    let mut conn = client.tls(conn, config.clone(), with_sni).await?;
+    let mut conn = crate::socks_tls(conn, config.clone(), with_sni).await?;
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:443\r\nConnection: close\r\n\r\n")
         .await
         .unwrap();

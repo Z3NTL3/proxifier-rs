@@ -291,21 +291,4 @@ impl Socks5 {
             )),
         }
     }
-
-    /// Wraps the [`TcpStream`] so that it supports TLS
-    ///
-    /// - `stream`: [`TcpStream`]
-    /// - `config`: [`ClientConfig`]
-    /// - `sni`: [`ServerName`]
-    #[cfg(feature = "tls")]
-    pub async fn tls(
-        &self,
-        stream: TcpStream,
-        config: Arc<ClientConfig>,
-        sni: ServerName<'static>,
-    ) -> crate::Result<TlsStream<TcpStream>> {
-        let connector = TlsConnector::from(config);
-        let stream = connector.connect(sni, stream).await?;
-        Ok(stream)
-    }
 }

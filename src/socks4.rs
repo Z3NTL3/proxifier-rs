@@ -160,21 +160,4 @@ impl Socks4 {
         Reply::try_from(reply[1])?;
         Ok(conn)
     }
-
-    /// Wraps a [`TcpStream`] so that it supports TLS
-    ///
-    /// - `stream`: [`TcpStream`]
-    /// - `config`: [`ClientConfig`]
-    /// - `sni`: [`ServerName`]
-    #[cfg(feature = "tls")]
-    pub async fn tls(
-        &self,
-        stream: TcpStream,
-        config: Arc<ClientConfig>,
-        sni: ServerName<'static>,
-    ) -> crate::Result<TlsStream<TcpStream>> {
-        let connector = TlsConnector::from(config);
-        let conn = connector.connect(sni, stream).await?;
-        Ok(conn)
-    }
 }
