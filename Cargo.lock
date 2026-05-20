@@ -227,7 +227,6 @@ name = "proxifier-rs"
 version = "0.1.62"
 dependencies = [
  "base64",
- "bytes",
  "http",
  "rustls",
  "rustls-pki-types",

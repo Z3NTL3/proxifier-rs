@@ -12,7 +12,6 @@ default = ["tls"]
 tls = []
 
 [dependencies]
-bytes = "1.11.1"
 http = "1.4.0"
 rustls = "0.23.40"
 thiserror = "2.0.18"
