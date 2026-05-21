@@ -4,10 +4,7 @@ use crate::{
     auth::{self, Auth},
     errors,
 };
-use std::{
-    marker::PhantomData,
-    net::{SocketAddr, SocketAddrV4},
-};
+use std::net::SocketAddr;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
