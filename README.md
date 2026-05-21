@@ -17,13 +17,15 @@ Proxifier is high-level proxy client library. It supports HTTP/HTTPS/SOCKS4/SOCK
 
 ```rust
 #[tokio::test]
-async fn test_socks4() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let mut conn = crate::socks4::Socks4::builder()
-        .proxy("72.195.34.35:27360".parse().unwrap())
-        .to("104.26.12.205:80".parse().unwrap())
-        .build()?
-        .connect()
-        .await?;
+async fn test_socks5_ipv4() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let mut conn = crate::socks5::connect(
+        Context {
+            proxy: "194.113.119.68:6742".parse().unwrap(),
+            destination: "104.26.12.205:80".parse::<SocketAddrV4>().unwrap().into(),
+        },
+        Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()),
+    )
+    .await?;
 
     conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")
         .await
@@ -35,10 +37,11 @@ async fn test_socks4() -> std::result::Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-// output:
-// "HTTP/1.1 200 OK\r\nDate: Wed, 20 May 2026 11:28:39 GMT\r\nContent-Type: text/plain\r\nContent-Length: 12\r\nConnection: close\r\nServer: cloudflare\r\nVary: Origin\r\ncf-cache-status: DYNAMIC\r\nCF-RAY: 9feaffc71862614d-ATL\r\n\r\n
+// running 1 test
+// out: "HTTP/1.1 200 OK\r\nDate: Thu, 21 May 2026 15:15:52 GMT\r\nContent-Type: text/plain\r\nContent-Length: 14\r\nConnection: close\r\nServer: cloudflare\r\nVary: Origin\r\ncf-cache-status: DYNAMIC\r\nCF-RAY: 9ff489fdddc0dc72-FRA\r\n\r\n
 //
-// 72.195.34.35"
+// 194.113.119.68"
+// test tests::test_socks5_ipv4 ... ok
 ```
 
 #### Credits

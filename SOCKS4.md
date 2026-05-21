@@ -12,19 +12,19 @@ This section will make you familiar with the API. Let's start right away!
 
 ---
 
-We build into a [`Socks4`] client instance by creating it via a builder construct first. We can do so using [`Socks4Builder`], eventually after building we receive a client in turn:
+A SOCKS4 `CONNECT` stream can be constructed like:
 
 ```rust
- let client = crate::socks4::Socks4::builder()
-    .proxy("72.195.34.35:27360".parse().unwrap())
-    .to("172.67.74.152:80".parse().unwrap())
-    .build()?;
+ let mut conn = crate::socks4::connect(Context {
+        proxy: "72.195.34.35:27360".parse().unwrap(),
+        destination: "104.26.12.205:80".parse().unwrap(),
+    })
+    .await?;
 ```
 
-Now, we want to connect with the proxy server and make it relay our traffic towards the destination:
+^From this point on, it's upto you what you'll do with the returned [`TcpStream`]:
 
 ```rust
-let mut conn = client.connect().await.unwrap();
 conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")
     .await
     .unwrap();
@@ -32,9 +32,9 @@ conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r
 let mut resp = String::new();
 conn.read_to_string(&mut resp).await.unwrap();
 println!("out: {:?}", resp);
+Ok(())
 ```
 
-That's it. If you ever want to change the proxy relay or destination target you can always do so without having to reconstruct from a builder using:
+That's it! If you ever want to encapsulate the [`TcpStream`] with `tls` you can use [`crate::socks_with_tls`] or any third party crate.
 
-- [`Socks4::set_proxy`]
-- [`Socks4::set_target`]
+- Please note that it's possible to disable `tls` artifacts from `rustls` for this package by removing the `tls` feature from crate's default Cargo feature
