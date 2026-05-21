@@ -45,8 +45,8 @@ pub enum NetworkTarget {
 }
 
 pub struct Context<T = SocketAddrV4, P = SocketAddrV4> {
-    destination: T,
-    proxy: P,
+    pub destination: T,
+    pub proxy: P,
 }
 
 #[derive(Clone)]
