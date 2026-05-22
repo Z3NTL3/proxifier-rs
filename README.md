@@ -4,6 +4,8 @@ Simple proxy client library to relay network packets towards a destination targe
 
 - Supports SOCKS4/5 and HTTP/HTTPS type proxies
 
+This is a Rust port of [proxifier](https://github.com/z3ntl3/proxifier). Specifically designed for production use with [ProxyBeast](https://github.com/z3ntl3) software.
+
 #### Uses Async
 
 - With `tokio`
