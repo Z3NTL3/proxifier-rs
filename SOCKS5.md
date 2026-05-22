@@ -27,8 +27,8 @@ A SOCKS5 `CONNECT` stream can be constructed like:
 ```rust
  let mut conn = crate::socks5::connect(
         Context {
-            proxy: "194.113.119.68:6742".parse().unwrap(),
-            destination: "104.26.12.205:80".parse::<SocketAddrV4>().unwrap().into(),
+            proxy: "194.113.119.68:6742".parse()?,
+            destination: NetworkTarget::IP("104.26.12.205:80".parse()?),
         },
         Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()), // or Auth::NoAuth
     )
@@ -39,11 +39,10 @@ A SOCKS5 `CONNECT` stream can be constructed like:
 
 ```rust
 conn.write(b"GET / HTTP/1.1\r\nHost: api.ipify.org:80\r\nConnection: close\r\n\r\n")
-    .await
-    .unwrap();
+    .await?;
 
 let mut resp = String::new();
-conn.read_to_string(&mut resp).await.unwrap();
+conn.read_to_string(&mut resp).await?;
 println!("out: {:?}", resp);
 Ok(())
 ```

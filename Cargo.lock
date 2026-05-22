@@ -224,7 +224,7 @@ dependencies = [
 
 [[package]]
 name = "proxifier-rs"
-version = "0.1.107"
+version = "0.1.108"
 dependencies = [
  "base64",
  "http",
