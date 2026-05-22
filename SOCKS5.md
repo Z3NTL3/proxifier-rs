@@ -30,7 +30,7 @@ A SOCKS5 `CONNECT` stream can be constructed like:
             proxy: "194.113.119.68:6742".parse().unwrap(),
             destination: "104.26.12.205:80".parse::<SocketAddrV4>().unwrap().into(),
         },
-        Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()),
+        Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()), // or Auth::NoAuth
     )
     .await?;
 ```

@@ -7,5 +7,6 @@ pub enum Auth {
     NoAuth,
     /// Header name seperated by semicolon and header value such as `Auth::HTTPAuthorizationHeader("Proxy-Authorization: Basic <encoded>".into())`
     HTTPAuthorizationHeader(String),
+    /// Implements user password authentication for SOCKS5
     UserPass(String, String),
 }

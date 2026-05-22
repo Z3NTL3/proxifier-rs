@@ -1,17 +1,23 @@
 ### proxifier-rs
 
-Proxifier is high-level proxy client library. It supports HTTP/HTTPS/SOCKS4/SOCKS5 type proxies.
+Simple proxy client library to relay network packets towards a destination target using a proxy.
 
-- Built on top of `tokio` and `rustls`.
-- This is the Rust port for [proxifier](https://proxifier.z3ntl3.com), intended for use with the revamped [ProxyBeast](https://github.com/z3ntl3/ProxyBeast) software
+- Supports SOCKS4/5 and HTTP/HTTPS type proxies
 
-> **Do not use this crate yet, version 0.2.0 will be the final build with complete API, functionality and documentation**
+#### Uses Async
 
-- Final build will have Cargo Features for TLS code artifacts management
+- With `tokio`
+- Tracing support todo
 
-##### Features
+#### Supports
 
-- `tls`, enabled by default
+- TLS via `rustls`
+
+If you want to use a different TLS library, feel free to disable default `tls` Cargo feature for this crate.
+
+#### Summary of the API
+
+Exports simple `connect` functions from which a `TcpStream` can be obtained which in turn can be wrapped to encapsulate the stream with TLS support.
 
 #### Quick glance into the API
 
@@ -23,7 +29,7 @@ async fn test_socks5_ipv4() -> std::result::Result<(), Box<dyn std::error::Error
             proxy: "194.113.119.68:6742".parse().unwrap(),
             destination: "104.26.12.205:80".parse::<SocketAddrV4>().unwrap().into(),
         },
-        Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()),
+        Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()), // or Auth::NoAuth
     )
     .await?;
 

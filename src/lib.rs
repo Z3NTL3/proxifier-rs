@@ -49,6 +49,21 @@ pub struct Context<T = SocketAddrV4, P = SocketAddrV4> {
     pub proxy: P,
 }
 
+/// Used in conjunc tion with [`NetworkTarget::Domain`] and adjacency for SOCKS5 connect operations
+///
+/// # Example
+///
+/// ```rust
+///  let mut conn = crate::socks5::connect(
+///     Context {
+///         proxy: "194.113.119.68:6742".parse().unwrap(),
+///         destination: NetworkTarget::Domain("api.ipify.org".into(), Port(80)),
+///     },
+///     Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()),
+///  )
+///  .await?;
+/// ```
+#[repr(transparent)]
 #[derive(Clone)]
 pub struct Port(u16);
 
