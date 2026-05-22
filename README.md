@@ -15,7 +15,7 @@ This is a Rust port of [proxifier](https://github.com/z3ntl3/proxifier). Specifi
 
 - TLS via `rustls`
 
-If you want to use a different TLS library, feel free to disable default this crate's default Cargo feature: `tls`
+If you want to use a different TLS library, feel free to disable this crate's default Cargo feature: `tls`
 
 #### Summary of the API
 
