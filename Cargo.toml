@@ -1,6 +1,6 @@
 [package]
 name = "proxifier-rs"
-description = "Proxy client library that relays traffic towards a destination target through HTTP/HTTPS/SOCKS4/SOCKS5 type proxies with support for TLS"
+description = "Simple proxy client library to relay network packets towards a destination target using a proxy. With built-in support for TLS."
 version = "0.1.102"
 edition = "2024"
 license-file = "LICENSE"

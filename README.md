@@ -1,6 +1,6 @@
 ### proxifier-rs
 
-Simple proxy client library to relay network packets towards a destination target using a proxy.
+Simple proxy client library to relay network packets towards a destination target using a proxy. With built-in support for TLS.
 
 - Supports SOCKS4/5 and HTTP/HTTPS type proxies
 
