@@ -13,11 +13,11 @@ Simple proxy client library to relay network packets towards a destination targe
 
 - TLS via `rustls`
 
-If you want to use a different TLS library, feel free to disable default `tls` Cargo feature for this crate.
+If you want to use a different TLS library, feel free to disable default this crate's default Cargo feature: `tls`
 
 #### Summary of the API
 
-Exports simple `connect` functions from which a [`TcpStream`] is obtained and can in turn be wrapped into a [`TcpStream`] with support for TLS.
+Exports simple `connect` functions from which a [`TcpStream`] is obtained and can in turn be wrapped into a [`TlsStream<TcpStream>`] with support for TLS.
 
 #### Quick glance into the API
 
