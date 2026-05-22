@@ -17,7 +17,7 @@ If you want to use a different TLS library, feel free to disable default `tls` C
 
 #### Summary of the API
 
-Exports simple `connect` functions from which a `TcpStream` can be obtained which in turn can be wrapped to encapsulate the stream with TLS support.
+Exports simple `connect` functions from which a [`TcpStream`] is obtained and can in turn be wrapped into a [`TcpStream`] with support for TLS.
 
 #### Quick glance into the API
 
