@@ -28,7 +28,7 @@ Exports simple `connect` functions from which a [`TcpStream`] is obtained and ca
 async fn test_socks5_ipv4() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let mut conn = crate::socks5::connect(
         Context {
-            proxy: "194.113.119.68:6742".parse().unwrap(),
+            proxy: "194.113.119.68:6742".parse()?,
             destination: NetworkTarget::IP("104.26.12.205:80".parse()?),
         },
         Auth::UserPass("vcilvnba".into(), "vi14viqvvrr7".into()), // or Auth::NoAuth
