@@ -44,12 +44,13 @@ pub enum NetworkTarget {
     Domain(String, Port),
 }
 
+/// Context contains machine level information, such as details for the proxy server and it's destination address
 pub struct Context<T = SocketAddrV4, P = SocketAddrV4> {
     pub destination: T,
     pub proxy: P,
 }
 
-/// Used in conjunc tion with [`NetworkTarget::Domain`] and adjacency for SOCKS5 connect operations
+/// Used in conjunction with [`NetworkTarget::Domain`] and in adjacency to SOCKS5 connect operations
 ///
 /// # Example
 ///
